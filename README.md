@@ -19,3 +19,4 @@
 ## Tips and tricks
 
 - [Binary Classification: Tips and Tricks from 10 Kaggle Competitions](https://neptune.ai/blog/binary-classification-tips-and-tricks-from-kaggle)
+- [Category Encoders](https://contrib.scikit-learn.org/category_encoders/index.html#)
