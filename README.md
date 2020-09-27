@@ -3,9 +3,12 @@
 ## TabNeT
 - [TabNet: Attentive Interpretable Tabular Learning](https://arxiv.org/abs/1908.07442)
 - [Sebastien Fischman - Pytorch-TabNet: Beating XGBoost on Tabular Data Using Deep Learning](https://www.youtube.com/watch?v=ysBaZO8YmX8&t=1027s)
+- [PyTorch implementation of Tabnet](https://github.com/dreamquark-ai/tabnet)
 
 ## SuperTML: 2d embeddings
 - [SuperTML: Two-Dimensional Word Embedding for the Precognition on Structured Tabular Data](https://arxiv.org/abs/1903.06246)
+- [PyTorch implementation of SuperTML](https://github.com/ioangatop/super_tml)
+- [SuperTML for HiggsML](https://github.com/GilesStrong/SuperTML_HiggsML_Test)
 
 ## Data augmentation
 
