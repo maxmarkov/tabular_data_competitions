@@ -7,54 +7,63 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-def correlation_matrix(df, columns, method='pearson', figsize=(15,10)):
+class Correlation:
     '''
-    Method to compute the correlation matrix 
+    Class to introduce the correlation matrix related methods
+    Input: DataFrame object with features
     '''
-    # column names to indices 
-    idx_cont = [df.columns.get_loc(c) for c in columns if c in df]
-    # compute the correlation matrix for 'columns'
-    c_matrix = df.iloc[:, idx_cont].corr(method=method)
+    def __init__(self, df, columns, method='pearson'):
+        self.df = df
+        self.columns = columns
+        self.method = method
 
-    # Generate a mask for the upper triangle
-    mask = np.zeros_like(c_matrix, dtype=np.bool)
-    mask[np.triu_indices_from(mask)] = True
+        # column names to indices
+        idx_cont = [self.df.columns.get_loc(c) for c in self.columns if c in self.df]
+        # compute the correlation matrix for 'columns'
+        self.c_matrix = self.df.iloc[:, idx_cont].corr(method='pearson')
 
-    # Set up the matplotlib figure
-    f, ax = plt.subplots(figsize=figsize)
-
-    # Generate a custom diverging colormap
-    cmap = sns.diverging_palette(220, 10, as_cmap=True)
-
-    # Draw the heatmap with the mask and correct aspect ratio
-    sns.heatmap(c_matrix, mask=mask, cmap=cmap, center=0, square=True, 
-                linewidths=.5, cbar_kws={"shrink": .5}, annot=True)
-    ax.set_title('Correlation matrix', fontsize=15)
-
-def most_correlated_columns(df, columns, method='pearson', threshold=0.75):
-    '''
-    Method to find the most correlated features in the DataFrame
-    '''
-    # column names to indices 
-    idx_cont = [df.columns.get_loc(c) for c in columns if c in df]
-    # compute the correlation matrix for 'columns'
-    c_matrix = df.iloc[:, idx_cont].corr(method=method)
-
-    df_true = c_matrix[(c_matrix > threshold)]
-
-    # find columns where the condition is valid
-    columns = df_true.any(axis=0)
-    columns = columns[columns==True]
+    def show_correlation_matrix(self, figsize=(15,10)):
+        '''
+        Method to show the correlation matrix in a nice graphical format using seaborn
+        '''
     
-    correlated_dict = {}
-    for clmn in list(columns.index):
-        row_index = list(df_true[clmn].dropna().index)
-        value = list(df_true[clmn].dropna())
-        temp = {}
-        for i in range(len(row_index)):
-            if row_index[i] == clmn:
-                continue
-            temp[row_index[i]] = round(value[i],3)
-        if len(temp) > 0:
-            correlated_dict[clmn] = temp
-    return(correlated_dict)
+        # Generate a mask for the upper triangle
+        mask = np.zeros_like(self.c_matrix, dtype=np.bool)
+        mask[np.triu_indices_from(mask)] = True
+    
+        # Set up the matplotlib figure
+        f, ax = plt.subplots(figsize=figsize)
+    
+        # Generate a custom diverging colormap
+        cmap = sns.diverging_palette(220, 10, as_cmap=True)
+    
+        # Draw the heatmap with the mask and correct aspect ratio
+        sns.heatmap(self.c_matrix, mask=mask, cmap=cmap, center=0, square=True, 
+                    linewidths=.5, cbar_kws={"shrink": .5}, annot=True)
+        ax.set_title('Correlation matrix', fontsize=15)
+
+    def most_correlated_features(self, threshold=0.75):
+        '''
+        Method to find the most correlated features in the DataFrame
+        Input: covariance threshold (float)
+        Output: dictionary with feature covariance above threshold
+        '''
+        df = self.c_matrix[(self.c_matrix > threshold)]
+    
+        # find columns where the condition is valid
+        columns = df.any(axis=0)
+        columns = columns[columns==True]
+       
+        # create a dictionary of features with dictionary of highly covariant features
+        correlated_dict = {}
+        for clmn in list(columns.index):
+            row_index = list(df[clmn].dropna().index)
+            value = list(df[clmn].dropna())
+            temp = {}
+            for i in range(len(row_index)):
+                if row_index[i] == clmn:
+                    continue
+                temp[row_index[i]] = round(value[i],3)
+            if len(temp) > 0:
+                correlated_dict[clmn] = temp
+        return(correlated_dict)
