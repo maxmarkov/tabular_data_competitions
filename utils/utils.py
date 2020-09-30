@@ -10,11 +10,16 @@ import matplotlib.pyplot as plt
 class Correlation:
     '''
     Class to introduce the correlation matrix related methods
-    Input: DataFrame object with features
+    Input: df - DataFrame with data,
+           columns - list of selected columns for which the correlation matrix is computed 
+           method - Method of correlation: {‘pearson’, ‘kendall’, ‘spearman’}
     '''
     def __init__(self, df, columns, method='pearson'):
         self.df = df
         self.columns = columns
+        # all self.columns must be in df
+        if not all(elem in self.df.columns for elem in list(self.columns)):
+            print('Columns are not in the DataFrame')
         self.method = method
 
         # column names to indices
