@@ -19,7 +19,7 @@ class Correlation:
         self.columns = columns
         # all self.columns must be in df
         if not all(elem in self.df.columns for elem in list(self.columns)):
-            print('Columns are not in the DataFrame')
+            raise ValueError ("Columns are not in the DataFrame")
         self.method = method
 
         # column names to indices
@@ -37,7 +37,7 @@ class Correlation:
         mask[np.triu_indices_from(mask)] = True
     
         # Set up the matplotlib figure
-        f, ax = plt.subplots(figsize=figsize)
+        fig, ax = plt.subplots(figsize=figsize)
     
         # Generate a custom diverging colormap
         cmap = sns.diverging_palette(220, 10, as_cmap=True)
@@ -59,7 +59,7 @@ class Correlation:
         columns = df.any(axis=0)
         columns = columns[columns==True]
        
-        # create a dictionary of features with dictionary of highly covariant features
+        # create a dictionary of highly covariant features
         correlated_dict = {}
         for clmn in list(columns.index):
             row_index = list(df[clmn].dropna().index)
@@ -72,3 +72,23 @@ class Correlation:
             if len(temp) > 0:
                 correlated_dict[clmn] = temp
         return(correlated_dict)
+
+    def plot_feature_vs_target(self, feature, target):
+        fig, axes = plt.subplots(1, 2, figsize=(15,5))
+
+        # set ymax from the maximum of mean value
+        ymax = self.df.groupby(feature)[target].mean().sort_values().max()
+        print(ymax)
+
+        self.df.plot.scatter(x=target, y=feature, style='*', s=10, c='r', ax=axes[0])
+        axes[0].set_xlabel(target, fontsize=15)
+        axes[0].set_ylabel(feature, fontsize=15)
+        axes[0].set_ylim([0,ymax])
+        #axes[0].set_xticklabels(fontsize=15)
+        axes[0].set_title(feature+' vs '+ target + ' distribution', fontsize=15)
+
+        self.df.groupby(feature)[target].mean().sort_values().plot(style='*', logx=True, grid=True, c='r', ax=axes[1])
+        axes[1].set_xlabel(target, fontsize=15)
+        axes[1].set_ylabel(feature, fontsize=15)
+        axes[1].set_title(feature+' vs '+ target + ' mean', fontsize=15)
+
